@@ -11,11 +11,11 @@ import os
 import re
 
 
-def safe_filename(filename, replace=''):
+def safe_filename(filename: str, replace: str = '') -> str:
     """
     set the filename be verified
-    :param filename:
-    :param replace:
+    :param filename: target name
+    :param replace: replace illegal word to this word
     :return:
     """
     return re.sub(re.compile(
@@ -24,11 +24,18 @@ def safe_filename(filename, replace=''):
         filename
     )
 
-def get_post_content(file_name):
+
+def get_post_content(file_name: str) -> str:
     _content = open(file_name, 'r', encoding='utf-8').read()
     return _content
 
-def set_double_quote(_value: str):
+
+def set_double_quote(_value: str) -> str:
+    """
+    if some header key need add double quote
+    :param _value:
+    :return:
+    """
     _value = _value.replace('"', "'")
     if _value[0] == "'":
         _value = list(_value)
@@ -44,10 +51,13 @@ def set_double_quote(_value: str):
         _value += '"'
     return _value
 
-def recursion_dir_all_file(path):
-    '''
-    :param path: 文件夹目录
-    '''
+
+def recursion_dir_all_file(path: str) -> list:
+    """
+    Get all files in the folder(with dir path)
+    :param path:
+    :return:
+    """
     file_list = []
     for dir_path, dirs, files in os.walk(path):
         for file in files:
@@ -59,6 +69,11 @@ def recursion_dir_all_file(path):
             file_list.extend(recursion_dir_all_file(os.path.join(dir_path, dir)))
     return file_list
 
-def make_dir(_path):
+
+def make_dir(_path: str) -> None:
+    """
+    :param _path:
+    :return:
+    """
     if not os.path.exists(_path):
         os.makedirs(_path)

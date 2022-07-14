@@ -12,6 +12,8 @@ import re
 import shutil
 import time
 from os.path import basename
+from typing import Optional
+
 from loguru import logger
 from slugify import slugify
 
@@ -19,13 +21,13 @@ from ssgtool.config import default_header_dict, header_format_dict
 from ssgtool.helper import get_post_content, safe_filename, set_double_quote, recursion_dir_all_file, make_dir
 
 
-def get_new_file_name(_old_file_name: str):
+def get_new_file_name(_old_file_name: str) -> str:
     return safe_filename(_old_file_name)
 
 
-def check_the_format(_content: str):
+def check_the_format(_content: str) -> Optional[str, None]:
     """
-
+    check the post header format
     :param _content:
     :return:
     """
@@ -37,14 +39,25 @@ def check_the_format(_content: str):
         return None
 
 
-def get_post_header(_content, header_format):
+def get_post_header(_content: str, header_format: str) -> str:
+    """
+
+    :param _content:
+    :param header_format:
+    :return:
+    """
     format_value = header_format_dict[header_format]
     re_pattern = "(\{}{3})([\s\S]*)(\{}{3})".replace("{}", format_value)
     _header = re.search(re_pattern, _content).group(2)
     return _header
 
 
-def format_post_header(_header_dict: dict):
+def format_post_header(_header_dict: dict) -> dict:
+    """
+
+    :param _header_dict:
+    :return:
+    """
     _default_header_dict = default_header_dict
     for k, v in _header_dict.items():
         if k == 'image':
@@ -55,24 +68,38 @@ def format_post_header(_header_dict: dict):
     return _default_header_dict
 
 
-def split_header_str(h_list: list, sep: str = "="):
-    h_dict = {}
-    for h in h_list:
+def split_header_str(header_list: list, sep: str = "=") -> dict:
+    """
+    split value in list by sep
+    :param header_list:
+    :param sep:
+    :return:
+    """
+    header_dict = {}
+    for h in header_list:
         key, value = h.split(sep, 1)
-        h_dict[key.strip()] = value.strip()
-    return h_dict
+        header_dict[key.strip()] = value.strip()
+    return header_dict
 
 
-def generate_new_header_str(_header_dict: dict, sep: str = " = ", _header_format: str = "toml", add_format=False):
+def generate_new_header_str(header_dict: dict, sep: str = " = ", header_format: str = "toml", add_format=False) -> str:
+    """
+
+    :param header_dict:
+    :param sep:
+    :param header_format:
+    :param add_format:
+    :return:
+    """
     if add_format:
-        _new_header_str = f'{header_format_dict[_header_format] * 3}\n'
+        new_header_str = f'{header_format_dict[header_format] * 3}\n'
     else:
-        _new_header_str = '\n'
-    for k, v in _header_dict.items():
-        _new_header_str += f"{k}{sep}{set_double_quote(v) if k in ['title', 'layout', 'image', 'slug'] else v}\n"
+        new_header_str = '\n'
+    for k, v in header_dict.items():
+        new_header_str += f"{k}{sep}{set_double_quote(v) if k in ['title', 'layout', 'image', 'slug'] else v}\n"
     if add_format:
-        _new_header_str += f'{header_format_dict[_header_format] * 3}'
-    return _new_header_str
+        new_header_str += f'{header_format_dict[header_format] * 3}'
+    return new_header_str
 
 
 def generate_default_post(_title: str):
@@ -85,7 +112,16 @@ def generate_default_post(_title: str):
 
 
 def catalogue_by_date(src_dir: str, src_data_key: str, src_date_format: str, target_date_format: str,
-                      target_dir: str = None):
+                      target_dir: str = None) -> bool:
+    """
+    Batch categorize blogs in a specified time format
+    :param src_dir:
+    :param src_data_key:
+    :param src_date_format:  eg:%Y-%m-%d
+    :param target_date_format: eg:%Y-%m-%d
+    :param target_dir:
+    :return:
+    """
     if not target_dir:
         target_dir = src_dir
     move_count = 0
@@ -108,9 +144,14 @@ def catalogue_by_date(src_dir: str, src_data_key: str, src_date_format: str, tar
         except Exception as e:
             logger.error(f"catalogue_by_date raise a {e} error")
     logger.info(f"catalogue finish: file_count:{file_count} move_count:{move_count}")
+    return True
 
 
-def get_post_header_dict(file_path: str):
+def get_post_header_dict(file_path: str) -> tuple:
+    """
+    :param file_path:
+    :return:
+    """
     file_dir = os.path.dirname(file_path)
     content = get_post_content(file_path)
     header = get_post_header(content, check_the_format(content))
@@ -119,20 +160,30 @@ def get_post_header_dict(file_path: str):
     return file_dir, content, header, header_list, header_dict
 
 
-def format_post(file_path: str):
-    file_dir, content, header, header_list, header_dict = get_post_header_dict(file_path)
-    new_header_dict = format_post_header(header_dict)
-    new_header_str = generate_new_header_str(new_header_dict)
-    new_content = content.replace(header, new_header_str)
-    new_file_path = os.path.join(file_dir, f"{get_new_file_name(new_header_dict['title'])}.md")
-    with open(new_file_path, 'w', encoding='utf-8') as f:
-        f.write(new_content)
-    if new_file_path != file_path:
-        os.remove(file_path)
+def format_post(file_path: str) -> bool:
+    """
+
+    :param file_path: posts path
+    :return:
+    """
+    try:
+        file_dir, content, header, header_list, header_dict = get_post_header_dict(file_path)
+        new_header_dict = format_post_header(header_dict)
+        new_header_str = generate_new_header_str(new_header_dict)
+        new_content = content.replace(header, new_header_str)
+        new_file_path = os.path.join(file_dir, f"{get_new_file_name(new_header_dict['title'])}.md")
+        with open(new_file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        if new_file_path != file_path:
+            os.remove(file_path)
+    except Exception as e:
+        logger.warning(f"format_post raise a {e} error")
+        return False
+    return True
 
 
 if __name__ == '__main__':
     # format_post(r"D:\self\duckweeds7-blog\content\post\No module named 'scrapy.conf'报错解决方案\index.md")
     # generate_default_post("generate_test")
-    catalogue_by_date("D:\self\duckweeds7-blog\content\post","date","%Y-%m-%dT%H:%M:%S","%Y-%m-%d")
+    catalogue_by_date("D:\self\duckweeds7-blog\content\post", "date", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d")
 # print(default_header_dict)
