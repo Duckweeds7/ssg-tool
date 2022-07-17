@@ -7,21 +7,19 @@
 # @File : config.py
 # @desc :
 """
+import json
+import os.path
 import random
 import time
 
-header_format_dict = {
-    "toml": "+"
-}
-default_header_dict = {
-    "layout": '"blog"',
-    "title": '""',
-    "description": '""',
-    "date": f'{time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(int(time.time())))}',
-    "lastmod": f'{time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(int(time.time())))}',
-    "image": f'"https://picsum.photos/{random.randrange(800, 1600)}"',
-    "slug": '""',
-    "tags": '[]',
-    "categories": '[]',
-    "series": '[]'
-}
+config_json = json.load(open("./config/config.json", "r", encoding="utf-8"))
+header_format_dict = config_json["header_format_dict"]
+default_header_dict = config_json["default_header_dict"]
+for k in default_header_dict.keys():
+    value = default_header_dict[k]
+    if value['type'] == 'datetime' and value['format']:
+        default_header_dict[k] = f"{time.strftime(value['value'], time.localtime(int(time.time())))}",
+    if value['type'] == 'image' and value['format']:
+        default_header_dict[k] = value["value"]["url"].format(
+            f"{random.randrange(int(value['value']['range_start']), int(value['value']['range_end']))}")
+

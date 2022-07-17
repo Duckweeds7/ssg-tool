@@ -1,0 +1,61 @@
+{
+	"header_format_dict": {
+		"toml": "+"
+	},
+	"default_header_dict": {
+		"layout": {
+			"type": "string",
+			"format": false,
+			"value": "blog"
+		},
+		"title": {
+			"type": "string",
+			"format": false,
+			"value": ""
+		},
+		"description": {
+			"type": "string",
+			"format": false,
+			"value": ""
+		},
+		"date": {
+			"type": "datetime",
+			"format": true,
+			"value": "%Y-%m-%dT%H:%M:%S"
+		},
+		"lastmod": {
+			"type": "datetime",
+			"format": true,
+			"value": "%Y-%m-%dT%H:%M:%S"
+		},
+		"image": {
+			"type": "image",
+			"format": true,
+			"value": {
+				"url": "https://picsum.photos/{}",
+				"range_start": "800",
+				"range_end": "1000"
+			}
+		},
+		"slug": {
+			"type": "string",
+			"format": false,
+			"value": ""
+		},
+		"tags": {
+			"type": "list",
+			"format": false,
+			"value": "[]"
+		},
+		"categories": {
+			"type": "list",
+			"format": false,
+			"value": "[]"
+		},
+		"series": {
+			"type": "list",
+			"format": false,
+			"value": "[]"
+		}
+	}
+}
