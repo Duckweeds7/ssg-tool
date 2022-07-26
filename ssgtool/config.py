@@ -18,8 +18,10 @@ default_header_dict = config_json["default_header_dict"]
 for k in default_header_dict.keys():
     value = default_header_dict[k]
     if value['type'] == 'datetime' and value['format']:
-        default_header_dict[k] = f"{time.strftime(value['value'], time.localtime(int(time.time())))}",
+        default_header_dict[k] = f"{time.strftime(value['value'], time.localtime(int(time.time())))}"
+        continue
     if value['type'] == 'image' and value['format']:
         default_header_dict[k] = value["value"]["url"].format(
             f"{random.randrange(int(value['value']['range_start']), int(value['value']['range_end']))}")
-
+        continue
+    default_header_dict[k] = default_header_dict[k]["value"]

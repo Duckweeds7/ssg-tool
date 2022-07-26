@@ -11,12 +11,12 @@
 		"title": {
 			"type": "string",
 			"format": false,
-			"value": ""
+			"value": "''"
 		},
 		"description": {
 			"type": "string",
 			"format": false,
-			"value": ""
+			"value": "''"
 		},
 		"date": {
 			"type": "datetime",
@@ -40,7 +40,7 @@
 		"slug": {
 			"type": "string",
 			"format": false,
-			"value": ""
+			"value": "''"
 		},
 		"tags": {
 			"type": "list",

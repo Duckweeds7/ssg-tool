@@ -52,9 +52,10 @@ def set_double_quote(_value: str) -> str:
     return _value
 
 
-def recursion_dir_all_file(path: str) -> list:
+def recursion_dir_all_file(path: str, is_recursion: bool = True) -> list:
     """
     Get all files in the folder(with dir path)
+    :param is_recursion:
     :param path:
     :return:
     """
@@ -65,6 +66,8 @@ def recursion_dir_all_file(path: str) -> list:
             if "\\" in file_path:
                 file_path = file_path.replace('\\', '/')
             file_list.append(file_path)
+        if not is_recursion:
+            break
         for dir in dirs:
             file_list.extend(recursion_dir_all_file(os.path.join(dir_path, dir)))
     return file_list

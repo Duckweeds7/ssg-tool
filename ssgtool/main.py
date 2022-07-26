@@ -25,7 +25,7 @@ def get_new_file_name(_old_file_name: str) -> str:
     return safe_filename(_old_file_name)
 
 
-def check_the_format(_content: str) -> Optional[str, None]:
+def check_the_format(_content: str) -> Optional[str]:
     """
     check the post header format
     :param _content:
@@ -33,7 +33,7 @@ def check_the_format(_content: str) -> Optional[str, None]:
     """
     if _content[:3] == '+++':
         return 'toml'
-    elif _content[:3] == '~~~':
+    elif _content[:3] == '---':
         return 'yaml'
     else:
         return None
@@ -103,6 +103,11 @@ def generate_new_header_str(header_dict: dict, sep: str = " = ", header_format: 
 
 
 def generate_default_post(_title: str):
+    """
+    generate a new post by default way
+    :param _title:
+    :return:
+    """
     _default_header_dict = default_header_dict
     _default_header_dict['title'] = _title
     _default_header_dict['slug'] = slugify(_title)
@@ -112,21 +117,22 @@ def generate_default_post(_title: str):
 
 
 def catalogue_by_date(src_dir: str, src_data_key: str, src_date_format: str, target_date_format: str,
-                      target_dir: str = None) -> bool:
+                      target_dir: str = None, is_recursion: bool = True) -> bool:
     """
     Batch categorize blogs in a specified time format
+    :param is_recursion: optional
     :param src_dir:
     :param src_data_key:
     :param src_date_format:  eg:%Y-%m-%d
     :param target_date_format: eg:%Y-%m-%d
-    :param target_dir:
+    :param target_dir: optional
     :return:
     """
     if not target_dir:
         target_dir = src_dir
     move_count = 0
     file_count = 0
-    source_dir_files = recursion_dir_all_file(src_dir)
+    source_dir_files = recursion_dir_all_file(src_dir, is_recursion)
     for file in source_dir_files:
         if file[-3:] != '.md':
             continue
@@ -184,6 +190,7 @@ def format_post(file_path: str) -> bool:
 
 if __name__ == '__main__':
     # format_post(r"D:\self\duckweeds7-blog\content\post\No module named 'scrapy.conf'报错解决方案\index.md")
-    # generate_default_post("generate_test")
-    catalogue_by_date("D:\self\duckweeds7-blog\content\post", "date", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d")
+    # generate_default_post("利用代理池产生的日志生产威胁情报")
+    catalogue_by_date("D:\self\duckweeds7-blog\content\post", "date", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d",
+                      is_recursion=False)
 # print(default_header_dict)
