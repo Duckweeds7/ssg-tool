@@ -189,8 +189,8 @@ def format_post(file_path: str) -> bool:
 
 
 if __name__ == '__main__':
-    # format_post(r"D:\self\duckweeds7-blog\content\post\No module named 'scrapy.conf'报错解决方案\index.md")
-    # generate_default_post("利用代理池产生的日志生产威胁情报")
-    catalogue_by_date("D:\self\duckweeds7-blog\content\post", "date", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d",
+    # format_post(r"test\index.md")
+    # generate_default_post("test")
+    catalogue_by_date("test\content\post", "date", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d",
                       is_recursion=False)
 # print(default_header_dict)
